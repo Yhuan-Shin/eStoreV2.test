@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 import { useParams, useRouter } from "next/navigation";
 import { IPlans } from "@/types/product";
 import { useEffect, useState, useMemo } from "react";
