@@ -1,7 +1,6 @@
-import { IApplicationData, IPersonalInfo, IEmployment, IAddress, IBeneficiary, IHealthDeclaration } from "@/types/planholder";
+import { ITransactionData } from "@/types/planholder";
 
-// Initialize empty application data with all fields properly defined
-export const createEmptyApplicationData = (): IApplicationData => ({
+export const createEmptyApplicationData = (): ITransactionData => ({
   personalInfo: {
     firstName: "",
     middleName: "",
@@ -19,7 +18,7 @@ export const createEmptyApplicationData = (): IApplicationData => ({
     emailAddress: "",
     mailingAddress: "",
     landLineNumber: "",
-    addressLine1: "",
+    // addressLine1: "",
   },
   employment: {
     occupation: "",
@@ -36,20 +35,20 @@ export const createEmptyApplicationData = (): IApplicationData => ({
     barangay: "",
     city: "",
     province: "",
-    addressLine: "",
+    // addressLine: "",
   },
   beneficiaries: [],
   principalBeneficiary: undefined,
   contingentBeneficiary: undefined,
   healthDeclaration: {
-    healthDeclaration1: 0,
-    healthDeclaration2: 0,
-    healthDeclaration3: 0,
+    healthDeclaration1: false,
+    healthDeclaration2: false,
+    healthDeclaration3: false,
+    healthDeclaration4: false,
   },
 });
 
-// Log all application data to console with formatting
-export const logApplicationData = (data: IApplicationData): void => {
+export const logApplicationData = (data: ITransactionData): void => {
   console.group("Complete Application Data");
   
   console.group("Personal Information");
@@ -70,7 +69,7 @@ export const logApplicationData = (data: IApplicationData): void => {
     emailAddress: data.personalInfo.emailAddress,
     mailingAddress: data.personalInfo.mailingAddress,
     landLineNumber: data.personalInfo.landLineNumber,
-    addressLine1: data.personalInfo.addressLine1,
+    // addressLine1: data.personalInfo.addressLine1,
   });
   console.groupEnd();
 
@@ -80,7 +79,7 @@ export const logApplicationData = (data: IApplicationData): void => {
 
   console.group("Address Information");
   console.table({
-    addressLine: data.address.addressLine,
+    // addressLine: data.address.addressLine,
   });
   console.groupEnd();
 
@@ -109,17 +108,14 @@ export const logApplicationData = (data: IApplicationData): void => {
   console.groupEnd(); // End main group
 };
 
-// JSON export with formatting
-export const exportApplicationDataAsJSON = (data: IApplicationData): string => {
+export const exportApplicationDataAsJSON = (data: ITransactionData): string => {
   return JSON.stringify(data, null, 2);
 };
 
-// LocalStorage utility functions
 const STORAGE_KEY = "LifePlanApplication";
 
-// Save application data to localStorage
 export const saveApplicationDataToLocalStorage = (
-  data: IApplicationData
+  data: ITransactionData
 ): void => {
   try {
     const jsonData = JSON.stringify(data);
@@ -130,12 +126,11 @@ export const saveApplicationDataToLocalStorage = (
   }
 };
 
-// Load application data from localStorage
-export const loadApplicationDataFromLocalStorage = (): IApplicationData | null => {
+export const loadApplicationDataFromLocalStorage = (): ITransactionData | null => {
   try {
     const jsonData = localStorage.getItem(STORAGE_KEY);
     if (jsonData) {
-      const data = JSON.parse(jsonData) as IApplicationData;
+      const data = JSON.parse(jsonData) as ITransactionData;
       console.log("Application data loaded from localStorage");
       return data;
     }
@@ -146,7 +141,6 @@ export const loadApplicationDataFromLocalStorage = (): IApplicationData | null =
   }
 };
 
-// Clear application data from localStorage
 export const clearApplicationDataFromLocalStorage = (): void => {
   try {
     localStorage.removeItem(STORAGE_KEY);

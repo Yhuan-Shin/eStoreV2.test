@@ -1,34 +1,59 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   VStack,
-  HStack,
   Box,
-  Input,
-  Heading,
   Accordion,
   Span,
-  Stack,
   Checkbox,
   Separator,
 } from "@chakra-ui/react";
-import {
-  Button,
-  FileUpload,
-  Icon,
-  useFileUploadContext,
-} from "@chakra-ui/react";
-import { LuUpload } from "react-icons/lu";
-import {
-  Body,
-  H3,
-  H4,
-  PrimaryMdButton,
-  PrimarySmButton,
-  SecondaryMdButton,
-} from "st-peter-ui";
+import { Body, H4 } from "st-peter-ui";
 import { UploadFile } from "osp-chakra-reusable-components";
+import {
+  loadApplicationDataFromLocalStorage,
+  saveApplicationDataToLocalStorage,
+  createEmptyApplicationData,
+} from "@/lib/utils/applicationDataFactory";
+
 const HealthDeclaration = () => {
   const [value, setValue] = useState([""]);
+  const [healthDeclarationValues, setHealthDeclarationValues] = useState({
+    healthDeclaration1: false,
+    healthDeclaration2: false,
+    healthDeclaration3: false,
+    healthDeclaration4: false,
+  });
+
+  // Load health declaration values from localStorage on mount
+  useEffect(() => {
+    let appData = loadApplicationDataFromLocalStorage();
+
+    // If no data exists, create empty application data
+    if (!appData) {
+      appData = createEmptyApplicationData();
+      saveApplicationDataToLocalStorage(appData);
+    }
+
+    if (appData && appData.healthDeclaration) {
+      setHealthDeclarationValues(appData.healthDeclaration);
+    }
+  }, []);
+
+  // Save health declaration values to localStorage only when component unmounts
+  // This ensures data is saved once when user navigates away from this step
+  useEffect(() => {
+    return () => {
+      const appData = loadApplicationDataFromLocalStorage();
+      if (appData) {
+        appData.healthDeclaration = healthDeclarationValues;
+        saveApplicationDataToLocalStorage(appData);
+        console.log(
+          "Health Declaration saved to localStorage",
+          healthDeclarationValues,
+        );
+      }
+    };
+  }, [healthDeclarationValues]);
   const items = [
     {
       value: "first-item",
@@ -119,7 +144,15 @@ const HealthDeclaration = () => {
       </VStack>
 
       <VStack align="stretch" gap={4} mb={4}>
-        <Checkbox.Root>
+        <Checkbox.Root
+          checked={healthDeclarationValues.healthDeclaration1}
+          onCheckedChange={(details) =>
+            setHealthDeclarationValues((prev) => ({
+              ...prev,
+              healthDeclaration1: details.checked === true,
+            }))
+          }
+        >
           <Checkbox.HiddenInput />
           <Checkbox.Control />
           <Checkbox.Label>
@@ -127,7 +160,15 @@ const HealthDeclaration = () => {
             birthday).
           </Checkbox.Label>
         </Checkbox.Root>
-        <Checkbox.Root>
+        <Checkbox.Root
+          checked={healthDeclarationValues.healthDeclaration2}
+          onCheckedChange={(details) =>
+            setHealthDeclarationValues((prev) => ({
+              ...prev,
+              healthDeclaration2: details.checked === true,
+            }))
+          }
+        >
           <Checkbox.HiddenInput />
           <Checkbox.Control />
           <Checkbox.Label>
@@ -135,7 +176,15 @@ const HealthDeclaration = () => {
             in pursuit of my livelihood.
           </Checkbox.Label>
         </Checkbox.Root>
-        <Checkbox.Root>
+        <Checkbox.Root
+          checked={healthDeclarationValues.healthDeclaration3}
+          onCheckedChange={(details) =>
+            setHealthDeclarationValues((prev) => ({
+              ...prev,
+              healthDeclaration3: details.checked === true,
+            }))
+          }
+        >
           <Checkbox.HiddenInput />
           <Checkbox.Control />
           <Checkbox.Label>
@@ -146,7 +195,15 @@ const HealthDeclaration = () => {
             surgical attention.
           </Checkbox.Label>
         </Checkbox.Root>
-        <Checkbox.Root>
+        <Checkbox.Root
+          checked={healthDeclarationValues.healthDeclaration4}
+          onCheckedChange={(details) =>
+            setHealthDeclarationValues((prev) => ({
+              ...prev,
+              healthDeclaration4: details.checked === true,
+            }))
+          }
+        >
           <Checkbox.HiddenInput />
           <Checkbox.Control />
           <Checkbox.Label>

@@ -1,10 +1,11 @@
-import Beneficiary from "@/components/steps/beneficiary";
-import Confirmation from "@/components/steps/confirmation";
-import HealthDeclaration from "@/components/steps/health-declaration";
-import LifePlanApplicationWrapper from "@/components/steps/lifeplan-application-wrapper";
-import Payment from "@/components/steps/payment";
-import Requirements from "@/components/steps/upload-requirements";
-export const steps = [
+import Beneficiary from "@/components/steps/Beneficiary";
+import Confirmation, {
+  type ConfirmationProps,
+} from "@/components/steps/Confirmation";
+import HealthDeclaration from "@/components/steps/HealthDeclaration";
+import LifePlanApplicationWrapper from "@/components/steps/LifePlanApplicationFormWrapper";
+
+export const createLifePlanSteps = (confirmationProps?: ConfirmationProps) => [
   {
     id: "1",
     header: "Life Plan Application",
@@ -39,7 +40,7 @@ export const steps = [
     header: "Review Summary",
     title: "Summary",
     description: "Review and confirm your application",
-    component: <Confirmation />,
+    component: <Confirmation {...confirmationProps} />,
   },
   // {
   //   id: "5",

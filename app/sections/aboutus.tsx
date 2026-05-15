@@ -8,7 +8,7 @@ import Head from "next/head";
 import React from "react";
 import CountUp from "react-countup";
 import { useInView } from "react-intersection-observer";
-import { Body, H2, H3 } from "st-peter-ui";
+import { BaseText, Body, H2, H3 } from "st-peter-ui";
 
 const testimonials: TestimonialItem[] = [
   {
@@ -77,8 +77,16 @@ const AboutUs = () => {
             flexDirection="column"
             gap={4}
           >
-            <H2>Serving the Filipino</H2>
-            <H3 color="#177D54">Since 1980</H3>
+            <BaseText fontSize={{ base: "2xl", md: "4xl" }} fontWeight="bold">
+              Serving the Filipino
+            </BaseText>
+            <BaseText
+              fontSize={{ base: "2xl", md: "4xl" }}
+              color="#177D54"
+              fontWeight="bold"
+            >
+              Since 1980
+            </BaseText>
             <Box mx="auto" maxW={{ base: "90%", md: "400px" }}>
               <Body>
                 We are a trusted Pre-Need DeathCare company, serving the
@@ -118,7 +126,9 @@ const AboutUs = () => {
         {/* Testimonials */}
         <Box p={8}>
           <Flex direction="column" align="center" textAlign="center" mb={8}>
-            <H2>Testimonials</H2>
+            <BaseText fontSize={{ base: "2xl", md: "4xl" }} fontWeight="bold">
+              Testimonials
+            </BaseText>
             <Box
               h="5px"
               w="100px"

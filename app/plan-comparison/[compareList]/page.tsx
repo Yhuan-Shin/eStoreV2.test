@@ -2,7 +2,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { IPlans } from "@/types/product";
 import { useEffect, useState, useMemo } from "react";
-import { getProductByName } from "@/lib/utils/plan";
+import { ProductService } from "@/services/API/ProductService";
 import Comparison from "@/components/comparison";
 
 const PlanComparisonPage = () => {
@@ -14,7 +14,7 @@ const PlanComparisonPage = () => {
 
   const compareList = useMemo(
     () => compareListParam.split(","),
-    [compareListParam]
+    [compareListParam],
   );
 
   const removeItem = (itemToRemove: string) => {
@@ -30,7 +30,7 @@ const PlanComparisonPage = () => {
         const fetchedPlans: IPlans[] = [];
 
         for (const planDesc of compareList) {
-          const res = await getProductByName(planDesc);
+          const res = await ProductService.getProductByName(planDesc);
           fetchedPlans.push(res[0]);
         }
 

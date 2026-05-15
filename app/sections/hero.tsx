@@ -3,20 +3,36 @@
 import Search from "@/components/ui/search";
 import { Box, Flex, Span, Stack, VStack, chakra } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { H1, H3, Body, DynamicButton, BuyNowButton } from "st-peter-ui";
+import {
+  H1,
+  H3,
+  Body,
+  DynamicButton,
+  BuyNowButton,
+  BaseText,
+} from "st-peter-ui";
+import { useDemoAuth } from "@/components/ui/demo-auth";
+import { useEffect } from "react";
+import { Text } from "@chakra-ui/react";
 
 const Hero = () => {
+  const { logout } = useDemoAuth();
+  useEffect(() => {
+    logout();
+  }, [logout]);
+
   const router = useRouter();
-  const placeholders = [
-    "St. Peter Life Plan",
-    "Most affordable plan",
-    "St. Anne",
+  const planFeatures = [
+    // "Lifetime Coverage",
+    "Flexible Maturity",
+    "Guaranteed Returns",
+    "Family Protection",
   ];
 
   return (
     <Box
       position="relative"
-      h={{ base: "100%", md: "100vh" }}
+      h={{ base: "100vh", md: "100vh" }}
       display="flex"
       alignItems="center"
       justifyContent="center"
@@ -45,36 +61,46 @@ const Hero = () => {
       <Box zIndex={2} maxW={{ base: "full", md: "7xl" }} w={{ base: "100%" }}>
         <VStack
           alignItems="start"
-          gap={8}
-          py={{ base: 8, md: 0 }}
+          gap={{ base: 8 }}
+          py={{ base: 0, md: 0 }}
           px={{ base: 4, md: 0 }}
           color="white"
         >
-          <H1 color="white">
-            Para sa Magandang Kinabukasan: Bawat Pilipino, Dapat may{" "}
+          <BaseText
+            fontSize={{ base: "3xl", md: "5xl" }}
+            color="white"
+            fontWeight="bold"
+          >
+            Para sa Magandang Kinabukasan: Bawat Pilipino, Dapat may
             <Span className="text-[#177D54]">St. Peter Life Plan</Span>.
-          </H1>
-          <H3 color="white">Protect your loved ones with a plan that cares.</H3>
+          </BaseText>
+          <BaseText
+            fontSize={{ base: "3xl", md: "5xl" }}
+            color="white"
+            fontWeight="bold"
+          >
+            Protect your loved ones with a plan that cares.
+          </BaseText>
           <Box mt={4} w="full" maxW={{ md: "2xl" }}>
             <Search />
           </Box>
 
           <Stack
-            alignItems={{ base: "start", md: "center" }}
-            direction={{ base: "column", md: "row" }}
+            alignItems={{ base: "center", md: "center" }}
+            direction={{ base: "row", md: "row" }}
             w={{ base: "full" }}
-            gap={4}
           >
-            <Body color="white">Frequently searched:</Body>
-            {placeholders.map((term, i) => (
+            {/* <Body color="white">Plan Features:</Body> */}
+            {planFeatures.map((feature, i) => (
               <Box
                 key={i}
                 as="button"
                 display="inline-flex"
                 alignItems="center"
                 justifyContent="center"
-                px={{ base: 3, md: 4 }}
+                px={{ base: 2, md: 4 }}
                 py={{ base: 2, md: 3 }}
+                m={{ base: "auto", md: 0 }}
                 maxW={{ base: "full", md: "240px" }}
                 whiteSpace="nowrap"
                 overflow="hidden"
@@ -86,9 +112,11 @@ const Hero = () => {
                 cursor="pointer"
                 fontSize={{ base: "sm", md: "md" }}
                 _hover={{ bg: "whiteAlpha.200" }}
-                aria-label={`Search ${term}`}
+                aria-label={`${feature}`}
               >
-                <Body color="white">{term}</Body>
+                <BaseText color="white" fontSize={{ base: "xs", md: "md" }}>
+                  {feature}
+                </BaseText>
               </Box>
             ))}
           </Stack>

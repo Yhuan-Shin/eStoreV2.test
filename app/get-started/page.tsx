@@ -65,7 +65,7 @@ const fileToBytes = (file: File): Promise<Uint8Array> => {
   });
 };
 
-const page = () => {
+const GetStarted = () => {
   const router = useRouter();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [referralDialogOpen, setReferralDialogOpen] = useState(false);
@@ -454,4 +454,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default GetStarted;

@@ -12,12 +12,14 @@ interface HorizontalStepperProps {
   }[];
   onStepChange?: (index: number) => void;
   onSubmit?: () => void;
+  submitDisabled?: boolean;
 }
 
 const HorizontalStepper = ({
   steps,
   onStepChange,
   onSubmit,
+  submitDisabled,
 }: HorizontalStepperProps) => {
   const [activeStep, setActiveStep] = useState(0);
   const router = useRouter();
@@ -73,7 +75,7 @@ const HorizontalStepper = ({
             </Steps.NextTrigger>
           ) : (
             // <NextButton onClick={() => router.push("/success")} />
-            <PrimaryMdButton onClick={onSubmit}>
+            <PrimaryMdButton disabled={!!submitDisabled} onClick={onSubmit}>
               Proceed To Payment
             </PrimaryMdButton>
           )}

@@ -1,34 +1,21 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Body, Box, H3, PrimaryMdFlexButton } from "st-peter-ui";
 import {
   VStack,
   Grid,
-  Button,
-  Link,
   Separator,
   Input,
   Field,
-  Flex,
   RadioGroup,
 } from "@chakra-ui/react";
 import FloatingLabelInput from "@/components/ui/floating-label-input";
-import { FaArrowLeft } from "react-icons/fa";
-import { Breadcrumb } from "st-peter-ui";
-
+import { ISearchedPlanholder } from "@/types/planholder";
+import { PayMongoService } from "@/services/API/PayMongoService";
 import { useRouter } from "next/navigation";
-
-const breadcrumbItems = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Pay My Plan",
-    href: "/pay-my-plan",
-  },
-];
+import { CartItem } from "@/types/cartItem";
 const DetailsPayMyPlan = () => {
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [formData, setFormData] = useState({
     contractNo: "",
     planType: "",
@@ -48,8 +35,22 @@ const DetailsPayMyPlan = () => {
     paymentType: "",
     deceasedLastName: "",
     deceasedFirstName: "",
-    totalAmount: 0,
+    installmentAmount: 0,
+    balance: 0,
   });
+
+  const toSafeNumber = (value: unknown) => {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : 0;
+  };
+
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(toSafeNumber(value));
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -59,20 +60,127 @@ const DetailsPayMyPlan = () => {
     }));
   };
 
-  const handleClearAddress = () => {
-    setFormData((prev) => ({
-      ...prev,
-      lotNo: "",
-      street: "",
-      province: "",
-      city: "",
-      district: "",
-      zipCode: "",
-      barangay: "",
-    }));
+  const handleProceed = async () => {
+    setIsCheckingOut(true);
+
+    try {
+      const selectedAmount =
+        formData.paymentType === "installment"
+          ? toSafeNumber(formData.installmentAmount)
+          : formData.paymentType === "activePlan"
+            ? toSafeNumber(formData.balance)
+            : 0;
+
+      const myPlanPayload = {
+        LPANo: formData.contractNo,
+        planDesc: formData.planType,
+        FirstName: formData.firstName,
+        LastName: formData.lastName,
+        ...(formData.paymentType === "installment"
+          ? { ipInstAmt: selectedAmount }
+          : { balance: selectedAmount }),
+      };
+
+      sessionStorage.setItem("PayMyPlan", JSON.stringify(myPlanPayload));
+
+      const storedMyPlan = sessionStorage.getItem("PayMyPlan");
+
+      const parsedMyPlan = storedMyPlan
+        ? (JSON.parse(storedMyPlan) as CartItem)
+        : null;
+
+      if (!parsedMyPlan) {
+        throw new Error("My Plan data is missing");
+      }
+
+      const checkoutPayload = [
+        {
+          planDesc: parsedMyPlan.planDesc,
+          ipInstAmt: Number(
+            parsedMyPlan.ipInstAmt ?? parsedMyPlan.balance ?? 0,
+          ),
+          quantity: 1,
+        },
+      ];
+
+      const { checkoutUrl } =
+        await PayMongoService.createCheckout(checkoutPayload);
+
+      if (!checkoutUrl) {
+        throw new Error("Checkout URL not found");
+      }
+
+      window.location.href = checkoutUrl;
+    } catch (error) {
+      console.error(error);
+      alert("Failed to proceed to payment");
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
+  const selectedDisplayAmount =
+    formData.paymentType === "installment"
+      ? toSafeNumber(formData.installmentAmount)
+      : formData.paymentType === "activePlan"
+        ? toSafeNumber(formData.balance)
+        : 0;
+
   const router = useRouter();
+
+  useEffect(() => {
+    const serializedData = sessionStorage.getItem("payMyPlanDetails");
+    if (!serializedData) {
+      return;
+    }
+
+    try {
+      const searchedPlanholder = JSON.parse(
+        serializedData,
+      ) as ISearchedPlanholder & {
+        amountPayable?: number;
+        planDetails?: {
+          amount?: number;
+          amountPayable?: number;
+          balance?: number;
+        };
+      };
+
+      const resolvedInstallmentAmount = toSafeNumber(
+        searchedPlanholder.installmentAmount ??
+          searchedPlanholder.planDetails?.amount,
+      );
+      const resolvedBalance = toSafeNumber(
+        searchedPlanholder.balance ??
+          searchedPlanholder.amountPayable ??
+          searchedPlanholder.planDetails?.balance ??
+          searchedPlanholder.planDetails?.amountPayable,
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        contractNo: searchedPlanholder.contractNo,
+        planType: searchedPlanholder.planType,
+        firstName: searchedPlanholder.personalInfo.firstName,
+        middleName: searchedPlanholder.personalInfo.middleName,
+        lastName: searchedPlanholder.personalInfo.lastName,
+        lotNo: searchedPlanholder.address.lot,
+        street: searchedPlanholder.address.street,
+        province: searchedPlanholder.address.province,
+        city: searchedPlanholder.address.city,
+        district: searchedPlanholder.address.district,
+        zipCode: searchedPlanholder.address.zipCode,
+        barangay: searchedPlanholder.address.barangay,
+        email: searchedPlanholder.personalInfo.emailAddress,
+        mobileNo: searchedPlanholder.personalInfo.mobileNumber,
+        installmentAmount: resolvedInstallmentAmount,
+        balance: resolvedBalance,
+      }));
+    } catch {
+      sessionStorage.removeItem("payMyPlanDetails");
+    }
+  }, []);
+
   return (
     <Box
       p={8}
@@ -307,10 +415,19 @@ const DetailsPayMyPlan = () => {
           <RadioGroup.Root
             value={formData.paymentType}
             onValueChange={(e: any) =>
-              setFormData((prev) => ({
-                ...prev,
-                paymentType: e.value,
-              }))
+              setFormData((prev) => {
+                const paymentType =
+                  typeof e === "string"
+                    ? e
+                    : typeof e?.value === "string"
+                      ? e.value
+                      : "";
+
+                return {
+                  ...prev,
+                  paymentType,
+                };
+              })
             }
           >
             <VStack gap={6} w="full">
@@ -394,18 +511,14 @@ const DetailsPayMyPlan = () => {
 
         <Box textAlign="center" mt={8}>
           <Body fontWeight="bold" fontSize="lg">
-            TOTAL AMOUNT: <span>₱0.00</span>
+            TOTAL AMOUNT: <span>{formatCurrency(selectedDisplayAmount)}</span>
           </Body>
         </Box>
 
         <Separator />
 
         {/* Proceed Button */}
-        <PrimaryMdFlexButton
-          onClick={() => {
-            router.push("/pay-my-plan/payment");
-          }}
-        >
+        <PrimaryMdFlexButton onClick={handleProceed} disabled={isCheckingOut}>
           Proceed
         </PrimaryMdFlexButton>
       </VStack>

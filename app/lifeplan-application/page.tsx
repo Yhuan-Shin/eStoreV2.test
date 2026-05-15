@@ -1,10 +1,10 @@
-import LifePlanApplication from "@/components/steps/lifeplan-application";
-const page = () => {
+import LifePlanApplicationStepWrapper from "@/components/steps/LifePlanApplicationStepWrapper";
+const LifePlanApplicationMain = () => {
   return (
     <div>
-      <LifePlanApplication />
+      <LifePlanApplicationStepWrapper />
     </div>
   );
 };
 
-export default page;
+export default LifePlanApplicationMain;

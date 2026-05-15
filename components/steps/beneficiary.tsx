@@ -17,7 +17,7 @@ import {
   useBreakpointValue,
   Button,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { LuPencil } from "react-icons/lu";
 import {
@@ -32,6 +32,11 @@ import {
 } from "st-peter-ui";
 import { FloatingLabelInput } from "../ui/floating-label-input";
 import { IBeneficiary } from "@/types/planholder";
+import {
+  createEmptyApplicationData,
+  loadApplicationDataFromLocalStorage,
+  saveApplicationDataToLocalStorage,
+} from "@/lib/utils/applicationDataFactory";
 
 const beneficiaryTypes = createListCollection({
   items: [
@@ -98,6 +103,75 @@ const Beneficiary = ({ onUpdate }: BeneficiaryProps) => {
     beneficiaryClass: "principal",
   });
 
+  const syncBeneficiaries = (
+    principal: IBeneficiary[],
+    contingent: IBeneficiary[],
+  ) => {
+    const allBeneficiaries = [...principal, ...contingent];
+
+    onUpdate?.(
+      principal.length > 0 ? principal[0] : undefined,
+      contingent.length > 0 ? contingent[0] : undefined,
+      allBeneficiaries,
+    );
+
+    const currentData =
+      loadApplicationDataFromLocalStorage() ?? createEmptyApplicationData();
+
+    saveApplicationDataToLocalStorage({
+      ...currentData,
+      beneficiaries: allBeneficiaries,
+      principalBeneficiary: principal.length > 0 ? principal[0] : undefined,
+      contingentBeneficiary: contingent.length > 0 ? contingent[0] : undefined,
+    });
+  };
+
+  useEffect(() => {
+    const currentData = loadApplicationDataFromLocalStorage();
+    if (!currentData) return;
+
+    const storedBeneficiaries = currentData.beneficiaries ?? [];
+
+    let principalFromStorage = storedBeneficiaries.filter(
+      (beneficiary) => beneficiary.beneficiaryClass === "principal",
+    );
+    let contingentFromStorage = storedBeneficiaries.filter(
+      (beneficiary) => beneficiary.beneficiaryClass === "contingent",
+    );
+
+    if (storedBeneficiaries.length === 0) {
+      if (currentData.principalBeneficiary) {
+        principalFromStorage = [
+          {
+            ...currentData.principalBeneficiary,
+            beneficiaryClass:
+              currentData.principalBeneficiary.beneficiaryClass || "principal",
+          },
+        ];
+      }
+
+      if (currentData.contingentBeneficiary) {
+        contingentFromStorage = [
+          {
+            ...currentData.contingentBeneficiary,
+            beneficiaryClass:
+              currentData.contingentBeneficiary.beneficiaryClass ||
+              "contingent",
+          },
+        ];
+      }
+    }
+
+    setPrincipalBeneficiaries(principalFromStorage);
+    setContingentBeneficiaries(contingentFromStorage);
+
+    onUpdate?.(
+      principalFromStorage.length > 0 ? principalFromStorage[0] : undefined,
+      contingentFromStorage.length > 0 ? contingentFromStorage[0] : undefined,
+      [...principalFromStorage, ...contingentFromStorage],
+    );
+  }, [onUpdate]);
+
   const handleSaveAddBeneficiary = () => {
     if (
       !addFormBeneficiary.firstName ||
@@ -121,8 +195,6 @@ const Beneficiary = ({ onUpdate }: BeneficiaryProps) => {
       setContingentBeneficiaries(newContingent);
     }
 
-    const allBeneficiaries = [...newPrincipal, ...newContingent];
-
     setAddFormBeneficiary({
       firstName: "",
       middleInitial: "",
@@ -135,12 +207,7 @@ const Beneficiary = ({ onUpdate }: BeneficiaryProps) => {
     setAddDialogOpen(false);
     console.log("Beneficiary added:", addFormBeneficiary);
 
-    // Call parent update callback
-    onUpdate?.(
-      newPrincipal.length > 0 ? newPrincipal[0] : undefined,
-      newContingent.length > 0 ? newContingent[0] : undefined,
-      allBeneficiaries,
-    );
+    syncBeneficiaries(newPrincipal, newContingent);
   };
 
   const formatFullName = (beneficiary: IBeneficiary) => {
@@ -177,26 +244,51 @@ const Beneficiary = ({ onUpdate }: BeneficiaryProps) => {
   const handleSaveEdit = () => {
     if (!selectedBeneficiary) return;
 
+    let updatedPrincipal = principalBeneficiaries;
+    let updatedContingent = contingentBeneficiaries;
+
     if (selectedBeneficiary.type === "principal") {
-      setPrincipalBeneficiaries((prev) =>
-        prev.map((beneficiary, index) =>
-          index === selectedBeneficiary.index
-            ? { ...formBeneficiary }
-            : beneficiary,
-        ),
+      updatedPrincipal = principalBeneficiaries.map((beneficiary, index) =>
+        index === selectedBeneficiary.index
+          ? { ...formBeneficiary }
+          : beneficiary,
       );
+      setPrincipalBeneficiaries(updatedPrincipal);
     } else {
-      setContingentBeneficiaries((prev) =>
-        prev.map((beneficiary, index) =>
-          index === selectedBeneficiary.index
-            ? { ...formBeneficiary }
-            : beneficiary,
-        ),
+      updatedContingent = contingentBeneficiaries.map((beneficiary, index) =>
+        index === selectedBeneficiary.index
+          ? { ...formBeneficiary }
+          : beneficiary,
       );
+      setContingentBeneficiaries(updatedContingent);
     }
+
+    syncBeneficiaries(updatedPrincipal, updatedContingent);
 
     setEditDialogOpen(false);
     setSelectedBeneficiary(null);
+  };
+
+  const handleDeleteBeneficiary = (
+    type: "principal" | "contingent",
+    index: number,
+  ) => {
+    let updatedPrincipal = principalBeneficiaries;
+    let updatedContingent = contingentBeneficiaries;
+
+    if (type === "principal") {
+      updatedPrincipal = principalBeneficiaries.filter(
+        (_, beneficiaryIndex) => beneficiaryIndex !== index,
+      );
+      setPrincipalBeneficiaries(updatedPrincipal);
+    } else {
+      updatedContingent = contingentBeneficiaries.filter(
+        (_, beneficiaryIndex) => beneficiaryIndex !== index,
+      );
+      setContingentBeneficiaries(updatedContingent);
+    }
+
+    syncBeneficiaries(updatedPrincipal, updatedContingent);
   };
 
   return (
@@ -515,7 +607,7 @@ const Beneficiary = ({ onUpdate }: BeneficiaryProps) => {
                     <IconButton
                       aria-label="Edit beneficiary"
                       variant="ghost"
-                      color="blue.500"
+                      // color="blue.500"
                       onClick={() =>
                         handleOpenEdit("principal", idx, beneficiary)
                       }
@@ -534,11 +626,14 @@ const Beneficiary = ({ onUpdate }: BeneficiaryProps) => {
                       aria-label="Delete beneficiary"
                       variant="ghost"
                       color="red.500"
+                      onClick={() => handleDeleteBeneficiary("principal", idx)}
                     >
                       <FaRegTrashAlt />
                     </IconButton>
                   ) : (
-                    <DeleteSolidButton />
+                    <DeleteSolidButton
+                      onClick={() => handleDeleteBeneficiary("principal", idx)}
+                    />
                   )}
                 </HStack>
               </Flex>
@@ -640,11 +735,14 @@ const Beneficiary = ({ onUpdate }: BeneficiaryProps) => {
                       aria-label="Delete beneficiary"
                       variant="ghost"
                       color="red.500"
+                      onClick={() => handleDeleteBeneficiary("contingent", idx)}
                     >
                       <FaRegTrashAlt />
                     </IconButton>
                   ) : (
-                    <DeleteSolidButton />
+                    <DeleteSolidButton
+                      onClick={() => handleDeleteBeneficiary("contingent", idx)}
+                    />
                   )}
                 </HStack>
               </Flex>

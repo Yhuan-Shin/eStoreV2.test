@@ -3,7 +3,7 @@ import { Box } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { ChangeModePage } from "osp-chakra-reusable-components";
 
-export default function Page() {
+export default function ChangeMode() {
   const router = useRouter();
   return (
     <Box mt={"170px"}>
@@ -13,7 +13,7 @@ export default function Page() {
             "Change Mode Application Submitted Successfully! \n Transaction No: " +
               transactionId +
               "\n Transaction Amount: ₱ " +
-              transactionAmt.toLocaleString()
+              transactionAmt.toLocaleString(),
           );
           router.push("/");
         }}

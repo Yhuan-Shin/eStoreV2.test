@@ -270,7 +270,7 @@ const LifePlanApplication2 = ({
       barangay,
       city,
       province,
-      addressLine: `${lot} ${street} ${barangay} ${city} ${province}`.trim(),
+      // addressLine: `${lot} ${street} ${barangay} ${city} ${province}`.trim(),
     });
   }, [lot, street, barangay, city, province, district]);
 

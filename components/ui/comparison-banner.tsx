@@ -58,7 +58,7 @@ const ComparisonBanner = ({
                       } else if (compareList.length > 1) {
                         setShowAlert(false);
                         router.push(
-                          `/plan-comparison/${compareList.join(",")}`
+                          `/plan-comparison/${compareList.join(",")}`,
                         );
                       }
                     }}

@@ -1,6 +1,6 @@
 import React from "react";
 
-const page = () => {
+const ContactUs = () => {
   return (
     <div className="w-full h-[90vh]">
       <iframe
@@ -12,4 +12,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ContactUs;

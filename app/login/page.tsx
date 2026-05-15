@@ -6,7 +6,7 @@ import { LoginPage } from "osp-chakra-reusable-components";
 import React from "react";
 import { LoginButton } from "st-peter-ui";
 
-const page = () => {
+const Login = () => {
   const router = useRouter();
   return (
     <Box p={8} mt={8}>
@@ -27,4 +27,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Login;

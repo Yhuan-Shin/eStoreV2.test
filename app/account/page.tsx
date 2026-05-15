@@ -1,175 +1,166 @@
 "use client";
-import { Box, Flex, Grid, Text, VStack, Badge } from "@chakra-ui/react";
-
-import { VscAccount, VscLocation } from "react-icons/vsc";
-import { AiOutlineNumber } from "react-icons/ai";
-import { FaHandHoldingHeart } from "react-icons/fa6";
-import { RiContactsBook3Line } from "react-icons/ri";
-import { MdOutlineMailOutline } from "react-icons/md";
-import SideBar from "@/components/ui/sidebar";
-import { Body, H4 } from "st-peter-ui";
+import { Box, Flex } from "@chakra-ui/react";
+import { useEffect } from "react";
+import {
+  Address,
+  ListOfPlans,
+  MessageDialogProvider,
+  PlanDetailType,
+  PlanholderInfoProps,
+  PlanholderPageProps,
+  PlanholderProfilePage,
+} from "@splpi/plan-management";
+import { useDemoAuth } from "@/components/ui/demo-auth";
+import { BreadcrumbItemType } from "st-peter-ui";
 
 const Account = () => {
+  const { login } = useDemoAuth();
+  const breadcrumbItems: BreadcrumbItemType[] = [
+    {
+      label: "Home",
+      href: "/",
+    },
+    {
+      label: "Account",
+      href: "/account",
+    },
+  ];
+
+  const planholderProfileData: PlanholderPageProps = {
+    breadcrumbItems,
+    hyperlinks: {
+      payMyPlan: "/",
+      returnedOfPremium: `/#`,
+      claimApplication: "/claims",
+      changeOfMode: `/#`,
+      cashSurrenderedValue: "/",
+      transferOfRights: `/#`,
+      reinstement: `/#`,
+    },
+    planholderInfo: {
+      personId: "PI12345",
+      lastName: "DELA CRUZ",
+      firstName: "JOHN",
+      middleName: "OTAB",
+      nationality: "FILIPINO",
+      naturalizationDate: new Date("1900-01-01T00:00:00"),
+      dateOfBirth: new Date("1962-01-21T00:00:00"),
+      placeOfBirth: "SANTA CRUZ",
+      gender: "MALE",
+      civilStatus: "SINGLE",
+      height: "66``",
+      weight: 100.0,
+      employerName: "ST. PETER LIFE PLAN, INC.",
+      employmentStatus: "EMPLOYED",
+      tin: "TIN-123-456-789-0000",
+      securityNo: "SSS-123-456-7",
+      sourceOfFund: "SALARY",
+    } as PlanholderInfoProps,
+    planholderAddress: [
+      {
+        id: "ADD-123",
+        addressType: "RESIDENCE",
+        addressNo: null,
+        street: "LUMIYAP",
+        barangay: "DIVISORIA",
+        city: "ZAMBOANGA",
+        province: "ZAMBOANGA DEL SUR",
+        district: null,
+        zipCode: 1700,
+        isMailAddress: false,
+      },
+      {
+        id: "ADD-124",
+        addressType: "OFFICE",
+        addressNo: "999",
+        street: "EDSA",
+        barangay: "VETERANCE VILLAGE",
+        city: "QUEZON CITY",
+        province: "METRO MANILA",
+        district: null,
+        zipCode: 1402,
+        isMailAddress: true,
+      },
+    ] as Address[],
+    planholderContact: [
+      {
+        personId: "1234",
+        value: "+63-987-654-3210",
+        type: "MobileNo",
+      },
+      {
+        personId: "1234",
+        value: "8-7000",
+        type: "LandlineNo",
+      },
+    ],
+    plans: [
+      {
+        lpaNumber: "L25048596I",
+        planDescription: "ST. GEORGE",
+        mode: "ANNUAL",
+        term: 5.0,
+        planClass: "REGULAR ACCOUNT",
+        accountClass: "REGULAR ACCOUNT",
+        planCode: "LG5A10",
+        contractPrice: 53000.0,
+        installmentAmount: 10600.0,
+        totalAmountPayable: 53000.0,
+        effectivityDate: new Date("2025-04-05T00:00:00"),
+        newEffectivityDate: new Date("2025-04-05T00:00:00"),
+        branch: "ZAMBOANGA EAST",
+        cfpNumber: null,
+        cfpDate: null,
+        isServiceOnly: false,
+        isInsured: true,
+        accountStatus: "LAPSED",
+        terminationStatus: "NOT YET TERMINATED",
+        salesAgent1: "MARK KEVIN LEE",
+        salesAgent2: "MARK KEVIN LEE",
+      },
+      {
+        lpaNumber: "L25053102I",
+        planDescription: "ST. GREGORY",
+        mode: "MONTHLY",
+        term: 5.0,
+        planClass: "REGULAR ACCOUNT",
+        accountClass: "REGULAR ACCOUNT",
+        planCode: "G5M6",
+        contractPrice: 57000.0,
+        installmentAmount: 1100.0,
+        totalAmountPayable: 66000.0,
+        effectivityDate: new Date("2025-04-24T00:00:00"),
+        newEffectivityDate: new Date("2025-04-24T00:00:00"),
+        branch: "ZAMBOANGA WEST",
+        cfpNumber: null,
+        cfpDate: null,
+        isServiceOnly: false,
+        isInsured: true,
+        accountStatus: "ACTIVE",
+        terminationStatus: "NOT YET TERMINATED",
+        salesAgent1: "MARK KEVIN LEE",
+        salesAgent2: "MARK KEVIN LEE",
+      },
+    ] as PlanDetailType[],
+  };
+
+  useEffect(() => {
+    // Demo behavior: treat visiting /account as an authenticated entry.
+    login();
+  }, [login]);
+
   return (
-    <Box mt="32" p="8">
-      <Flex w="7xl" mx="auto" justify="center">
-        <SideBar />
-
-        <Flex direction="column" flex="1">
-          {/* Account Overview Section */}
-          <Box flex="1" p="8">
-            <H4>Account Overview</H4>
-            <Body>Quick information about your account</Body>
-
-            <Grid
-              templateColumns={{ base: "1fr", lg: "repeat(3, 1fr)" }}
-              gap="8"
-              mt="4"
-            >
-              <Flex
-                p="8"
-                border="1px solid"
-                borderColor="gray.300"
-                rounded="lg"
-                align="center"
-                gap="4"
-              >
-                <VscAccount size={32} color="#166534" />
-                <VStack align="start">
-                  <Text color="gray.500">Account Holder</Text>
-                  <Text fontWeight="bold">Juan Dela Cruz</Text>
-                </VStack>
-              </Flex>
-
-              <Flex
-                p="8"
-                border="1px solid"
-                borderColor="gray.300"
-                rounded="lg"
-                align="center"
-                gap="4"
-              >
-                <AiOutlineNumber size={32} color="#166534" />
-                <VStack align="start">
-                  <Text color="gray.500">Insurability</Text>
-                  <Text fontWeight="bold">Insurable</Text>
-                </VStack>
-              </Flex>
-
-              <Flex
-                p="8"
-                border="1px solid"
-                borderColor="gray.300"
-                rounded="lg"
-                align="center"
-                gap="4"
-              >
-                <FaHandHoldingHeart size={32} color="#166534" />
-                <VStack align="start" gap={0}>
-                  <Text color="gray.500">Member Since</Text>
-                  <Text fontWeight="bold">January 1, 2020</Text>
-                </VStack>
-              </Flex>
-
-              <Flex
-                p="8"
-                border="1px solid"
-                borderColor="gray.300"
-                rounded="lg"
-                align="center"
-                gap="4"
-              >
-                <RiContactsBook3Line size={32} color="#166534" />
-                <VStack align="start" gap={0}>
-                  <Text color="gray.500">Contact Number</Text>
-                  <Text fontWeight="bold">+63 912 345 6789</Text>
-                </VStack>
-              </Flex>
-
-              <Flex
-                p="8"
-                border="1px solid"
-                borderColor="gray.300"
-                rounded="lg"
-                align="center"
-                gap="4"
-              >
-                <MdOutlineMailOutline size={32} color="#166534" />
-                <VStack align="start">
-                  <Text color="gray.500">Email Address</Text>
-                  <Text fontWeight="bold">juan.delacruz@gmail.com</Text>
-                </VStack>
-              </Flex>
-
-              <Flex
-                p="8"
-                border="1px solid"
-                borderColor="gray.300"
-                rounded="lg"
-                align="center"
-                gap="4"
-              >
-                <VscLocation size={40} color="#166534" />
-                <VStack align="start">
-                  <Text color="gray.500">Home Address</Text>
-                  <Text fontWeight="bold">
-                    1234 Elm Street, Barangay 1, Makati City, Philippines
-                  </Text>
-                </VStack>
-              </Flex>
-            </Grid>
-          </Box>
-
-          {/* Active Plans Section */}
-          <Box flex="1" p="8">
-            <Flex justify="space-between" align="center">
-              <Box>
-                <H4>Active Plans</H4>
-                <Body>Manage your active plans</Body>
-              </Box>
-              <Badge bg="green.700" color="white" p="2" rounded="lg">
-                1 Active Plan
-              </Badge>
-            </Flex>
-
-            <Grid templateColumns="1fr" mt="4">
-              <Box border="1px solid" borderColor="gray.300" p="8" rounded="lg">
-                <VStack align="start" gap={8}>
-                  <Box>
-                    <H4>ST. ANNE</H4>
-                    <Text color="gray.500">
-                      Effectivity Date: January 1, 2020
-                    </Text>
-                  </Box>
-
-                  <Flex gap="16" wrap="wrap">
-                    <VStack align="start" gap={0}>
-                      <Text color="gray.500">Contract Price</Text>
-                      <Text fontWeight="bold">₱141,750.00</Text>
-                    </VStack>
-
-                    <VStack align="start" gap={0}>
-                      <Text color="gray.500">Plan Term</Text>
-                      <Text fontWeight="bold">5 years</Text>
-                    </VStack>
-
-                    <VStack align="start" gap={0}>
-                      <Text color="gray.500">Installment</Text>
-                      <Text fontWeight="bold">₱3,000 / month</Text>
-                    </VStack>
-
-                    {/* <VStack align="start" gap={0}>
-                      <Text color="gray.500">Maturity Date</Text>
-                      <Text fontWeight="bold">January 1, 2025</Text>
-                    </VStack> */}
-                  </Flex>
-                </VStack>
-              </Box>
-            </Grid>
-          </Box>
-        </Flex>
-      </Flex>
-    </Box>
+    <MessageDialogProvider>
+      <Box
+        mt={{ base: 32, md: 32 }}
+        mb={{ base: 32, md: 32 }}
+        px={{ base: 4, md: 8 }}
+        maxW="7xl"
+        mx="auto"
+      >
+        <PlanholderProfilePage props={planholderProfileData} noLookup />
+      </Box>
+    </MessageDialogProvider>
   );
 };
 

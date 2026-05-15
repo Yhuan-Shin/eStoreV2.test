@@ -1,5 +1,7 @@
 // services/paymongoService.ts
 import { createCheckout } from "@/app/api/paymongo/paymongo";
+import { ITransactionData } from "@/types/planholder";
+import { insertTransactionApi } from "@/app/api/insert-transaction/insertTransaction";
 
 export const PayMongoService = {
   async createCheckout(payload: any) {
@@ -14,5 +16,11 @@ export const PayMongoService = {
       console.error("Error creating checkout:", error);
       throw error;
     }
+  },
+};
+
+export const TransactionService = {
+  async insert(data: ITransactionData) {
+    return await insertTransactionApi(data);
   },
 };

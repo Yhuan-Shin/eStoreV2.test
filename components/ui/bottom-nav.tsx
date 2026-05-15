@@ -1,17 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
+import type { IconType } from "react-icons";
 import { HiOutlineHome } from "react-icons/hi2";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { IoNewspaperOutline } from "react-icons/io5";
 import { IoMenuOutline } from "react-icons/io5";
-import { IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineMessage } from "react-icons/md";
-import { MdOutlineShoppingCart } from "react-icons/md";
+import { MdOutlineAccountCircle } from "react-icons/md";
+import { FaRegFileAlt } from "react-icons/fa";
+import { FaRegCreditCard } from "react-icons/fa";
+import { BiSolidCoinStack } from "react-icons/bi";
+import { GiReturnArrow } from "react-icons/gi";
+import { FiShoppingCart } from "react-icons/fi";
 
-import { LoginButton } from "st-peter-ui";
 import {
   Box,
   Flex,
@@ -22,26 +26,51 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import ShoppingCart from "./shopping-cart";
+import { useDemoAuth } from "./demo-auth";
 
-const bottomNavItems = [
+type BottomNavItem = {
+  label: string;
+  href?: string;
+  icon: IconType;
+  action?: "cart";
+};
+
+const guestBottomNavItems: BottomNavItem[] = [
   { label: "Home", href: "/", icon: HiOutlineHome },
   { label: "Products", href: "/plans", icon: HiOutlineUserGroup },
-  { label: "E-Services", href: "/services", icon: IoSettingsOutline },
-  { label: "News & Blogs", href: "/contact", icon: IoNewspaperOutline },
+  { label: "File A Claim", href: "/claims", icon: FaRegFileAlt },
+  { label: "Cart", icon: FiShoppingCart, action: "cart" },
+];
+
+const authedBottomNavItems: BottomNavItem[] = [
+  { label: "Home", href: "/", icon: HiOutlineHome },
+  { label: "Products", href: "/plans", icon: HiOutlineUserGroup },
+  { label: "Pay My Plan", href: "/account/pay-my-plan", icon: FaRegCreditCard },
+  { label: "File A Claim", href: "/claims", icon: FaRegFileAlt },
+  { label: "Cart", icon: FiShoppingCart, action: "cart" },
+  // { label: "Yhuan Shin", href: "/profile", icon: MdOutlineAccountCircle },
 ];
 
 const sidePanelItems = [
   { label: "Home", href: "/", icon: HiOutlineHome },
   { label: "Products", href: "/plans", icon: HiOutlineUserGroup },
-  { label: "E-Services", href: "/services", icon: IoSettingsOutline },
-  { label: "News & Blogs", href: "/contact", icon: IoNewspaperOutline },
+  { label: "Pay My Plan", href: "/pay-my-plan", icon: FaRegCreditCard },
+  { label: "File A Claim", href: "/claims", icon: FaRegFileAlt },
+  { label: "Return Of Premium", href: "/rop", icon: BiSolidCoinStack },
+  { label: "Reinstatement", href: "/reinstatement", icon: GiReturnArrow },
+  { label: "News & Blogs", href: "/news-updates", icon: IoNewspaperOutline },
   { label: "Contact Us", href: "/contact-us", icon: MdOutlineMessage },
 ];
 
 const BottomNav = () => {
   const [cartOpen, setCartOpen] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [cartPosition, setCartPosition] = useState({ x: 0, y: 0 });
+
+  const { isLoggedIn } = useDemoAuth();
+
+  const bottomNavItems = isLoggedIn
+    ? authedBottomNavItems
+    : guestBottomNavItems;
+
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const disclosure = useDisclosure();
   const open = (disclosure as any).open ?? (disclosure as any).isOpen;
@@ -52,34 +81,8 @@ const BottomNav = () => {
 
   const isActive = (href: string) => href === pathname;
 
-  const handleCartMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (cartOpen) return;
-    setIsDragging(true);
-    setDragOffset({
-      x: e.clientX - cartPosition.x,
-      y: e.clientY - cartPosition.y,
-    });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-    setCartPosition({
-      x: e.clientX - dragOffset.x,
-      y: e.clientY - dragOffset.y,
-    });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
   return (
-    <Box
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-    >
-      {/* Bottom navigation - visible on mobile only */}
+    <Box>
       <Box
         as="nav"
         position="fixed"
@@ -95,45 +98,73 @@ const BottomNav = () => {
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <Flex justify="space-around" align="center" h={{ base: 16, md: 20 }}>
-          {bottomNavItems.map((it) => (
-            <Link
-              key={it.href}
-              href={it.href!}
-              onClick={onClose}
-              aria-label={it.label}
-            >
-              <Flex
-                direction="column"
-                align="center"
-                gap={2}
-                color={isActive(it.href!) ? "green.600" : "gray.600"}
-                _hover={{ color: "green.600" }}
-                fontWeight={isActive(it.href!) ? "semibold" : "normal"}
+          {bottomNavItems.map((it) =>
+            it.action === "cart" ? (
+              <Button
+                key={it.label}
+                variant="ghost"
+                onClick={() => {
+                  onClose();
+                  setCartOpen(true);
+                }}
+                display="flex"
+                flexDir="column"
+                color={cartOpen ? "green.600" : "gray.600"}
+                alignItems="center"
                 minW={16}
+                textTransform="none"
+                aria-label="Open cart"
               >
                 <Icon as={it.icon} boxSize={iconSize} />
-                <Text fontSize={{ base: "2xs", md: "xs" }}>{it.label}</Text>
-              </Flex>
-            </Link>
-          ))}
-          <Button
-            variant="ghost"
-            onClick={onOpen}
-            display="flex"
-            flexDir="column"
-            color={open ? "green.600" : "gray.600"}
-            alignItems="center"
-            minW={16}
-            aria-label="Open menu"
-          >
-            <Icon as={IoMenuOutline} boxSize={iconSize} />
-            <Text fontSize={{ base: "2xs", md: "xs" }}>Menu</Text>
-          </Button>
+                <Text fontSize={{ base: "2xs", md: "xs" }} textTransform="none">
+                  {it.label}
+                </Text>
+              </Button>
+            ) : (
+              <Link
+                key={it.href}
+                href={it.href!}
+                onClick={onClose}
+                aria-label={it.label}
+              >
+                <Flex
+                  direction="column"
+                  align="center"
+                  gap={2}
+                  color={isActive(it.href!) ? "green.600" : "gray.600"}
+                  _hover={{ color: "green.600" }}
+                  fontWeight={isActive(it.href!) ? "semibold" : "normal"}
+                  minW={16}
+                >
+                  <Icon as={it.icon} boxSize={iconSize} />
+                  <Text fontSize={{ base: "2xs", md: "xs" }}>{it.label}</Text>
+                </Flex>
+              </Link>
+            ),
+          )}
+          {!isLoggedIn && (
+            <Button
+              variant="ghost"
+              onClick={onOpen}
+              display="flex"
+              flexDir="column"
+              color={open ? "green.600" : "gray.600"}
+              alignItems="center"
+              minW={16}
+              textTransform="none"
+              aria-label="Open menu"
+            >
+              <Icon as={IoMenuOutline} boxSize={iconSize} />
+              <Text fontSize={{ base: "2xs", md: "xs" }} textTransform="none">
+                Menu
+              </Text>
+            </Button>
+          )}
         </Flex>
       </Box>
 
       {/* Lightweight slide-in panel (avoids Drawer type mismatches) */}
-      {open && (
+      {!isLoggedIn && open && (
         <Box
           position="fixed"
           inset={0}
@@ -145,7 +176,9 @@ const BottomNav = () => {
       )}
 
       <Box
-        display={{ base: "block", md: "block", lg: "none" }}
+        display={
+          !isLoggedIn ? { base: "block", md: "block", lg: "none" } : "none"
+        }
         position="fixed"
         top={0}
         left={0}
@@ -168,7 +201,7 @@ const BottomNav = () => {
         >
           <Text
             fontWeight="semibold"
-            textTransform="uppercase"
+            // textTransform="uppercase"
             fontSize="sm"
             letterSpacing="wide"
           >
@@ -206,79 +239,13 @@ const BottomNav = () => {
                 </Flex>
               </Link>
             ))}
-            {/* <Box
-              mt={4}
-              pt={4}
-              borderTopWidth="1px"
-              display="flex"
-              flexDirection="column"
-              gap={1}
-            >
-              <Link href="/about" onClick={onClose} aria-label="About Us">
-                <Text
-                  fontSize="sm"
-                  color="gray.600"
-                  _hover={{ color: "green.600" }}
-                >
-                  About Us
-                </Text>
-              </Link>
-              <Link
-                href="/profile"
-                onClick={onClose}
-                aria-label="Help and Support"
-              >
-                <Text
-                  fontSize="sm"
-                  color="gray.600"
-                  _hover={{ color: "green.600" }}
-                >
-                  Help & Support
-                </Text>
-              </Link>
-              {/* <Link href="/profile" onClick={onClose} aria-label="My Plans">
-                <Text
-                  fontSize="sm"
-                  color="gray.600"
-                  _hover={{ color: "green.600" }}
-                >
-                  My Plans
-                </Text>
-              </Link> 
-            </Box> */}
           </Box>
         </Box>
 
-        <Box p={4} w="full">
+        {/* <Box p={4} w="full">
           <LoginButton w="full" />
-        </Box>
+        </Box> */}
       </Box>
-
-      {/* Floating Cart Button */}
-      <Button
-        position="fixed"
-        bottom={{ base: 20, md: 24 }}
-        right={6}
-        zIndex="sticky"
-        borderRadius="full"
-        bg="green.600"
-        _hover={{ bg: "green.700" }}
-        w={16}
-        h={16}
-        display={{ base: "flex", md: "flex", lg: "none" }}
-        alignItems="center"
-        justifyContent="center"
-        boxShadow="lg"
-        onClick={() => setCartOpen(true)}
-        aria-label="Shopping Cart"
-      >
-        <Flex direction="column" align="center" gap={0.5}>
-          <Icon as={MdOutlineShoppingCart} boxSize={6} color="white" />
-          {/* <Text fontSize="xs" color="white" fontWeight="semibold">
-            Cart
-          </Text> */}
-        </Flex>
-      </Button>
 
       <ShoppingCart open={cartOpen} onClose={() => setCartOpen(false)} />
     </Box>

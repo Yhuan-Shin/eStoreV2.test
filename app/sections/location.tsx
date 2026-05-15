@@ -1,6 +1,8 @@
+"use client";
 import { Box, Flex } from "@chakra-ui/react";
 import { Carousel } from "@/components/ui/carousel";
 import {
+  BaseText,
   Body,
   DynamicButton,
   H2,
@@ -77,13 +79,16 @@ const Location = () => {
               m="auto"
             >
               <Box mb={4}>
-                <H2>
+                <BaseText
+                  fontSize={{ base: "2xl", md: "4xl" }}
+                  fontWeight="bold"
+                >
                   We&apos;re Near{" "}
                   <Box as="span" color="green.600">
                     {" "}
                     You
                   </Box>
-                </H2>
+                </BaseText>
               </Box>
 
               <Box w={{ base: "100%", md: "md" }}>
@@ -98,7 +103,15 @@ const Location = () => {
             </Flex>
 
             <Box mt={8} w="full">
-              <PrimaryMdButton w={{ base: "full", md: "auto" }}>
+              <PrimaryMdButton
+                w={{ base: "full", md: "auto" }}
+                onClick={() =>
+                  window.open(
+                    "https://www.google.com/maps/search/St+Peter+Chapels/@14.6564517,121.0245058,15z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI2MDQyOS4wIKXMDSoASAFQAw%3D%3D",
+                    "_blank",
+                  )
+                }
+              >
                 GO TO MAP
               </PrimaryMdButton>
             </Box>

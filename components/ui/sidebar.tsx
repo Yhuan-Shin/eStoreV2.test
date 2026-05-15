@@ -73,8 +73,8 @@ const SideBar = () => {
       icon: FaCheckCircle,
       label: "Claim Applications",
       submenu: [
-        { label: "Dismemberment", href: "/account/claims/file" },
-        { label: "Waiver of Installment", href: "/account/claims/file" },
+        // { label: "Dismemberment", href: "/account/claims/file" },
+        { label: "File A Claim", href: "/claims" },
       ],
     },
     { icon: FaFile, label: "ROP Application", href: "/rop" },

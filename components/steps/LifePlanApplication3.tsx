@@ -14,7 +14,6 @@ import {
 import FloatingLabelInput from "../ui/floating-label-input";
 import { Body, H4 } from "st-peter-ui";
 import { IEmployment } from "@/types/planholder";
-import { IApplicationData } from "@/types/planholder";
 
 const genderOptions = [
   { value: "male", label: "Male" },
@@ -40,9 +39,6 @@ const LifePlanApplication3 = ({
   initialData,
   onUpdate,
 }: LifePlanApplication3Props) => {
-  const [applicationData, setApplicationData] =
-    React.useState<IApplicationData>({} as IApplicationData);
-
   const [formData, setFormData] = React.useState<IEmployment>({
     occupation: initialData?.occupation ?? "",
     employerName: initialData?.employerName ?? "",
@@ -55,7 +51,9 @@ const LifePlanApplication3 = ({
 
   // Auto-save to parent when formData changes
   React.useEffect(() => {
-    onUpdate?.(formData);
+    if (onUpdate) {
+      onUpdate(formData);
+    }
   }, [formData, onUpdate]);
 
   return (

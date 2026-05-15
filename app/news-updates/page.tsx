@@ -14,7 +14,7 @@ import { FeaturedNews } from "@/components/featured-news";
 import { NewsCard } from "@/components/news-card";
 import { PrimaryMdButton, PrimaryMdFlexButton } from "st-peter-ui";
 
-const NewsUpdatesPage = () => {
+const NewsUpdates = () => {
   // Sample featured news data
   const featuredNews = {
     image: "/images/news-featured.jpg",
@@ -221,4 +221,4 @@ const NewsUpdatesPage = () => {
   );
 };
 
-export default NewsUpdatesPage;
+export default NewsUpdates;

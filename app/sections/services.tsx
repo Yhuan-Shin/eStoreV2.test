@@ -1,111 +1,206 @@
 "use client";
 
-import { Box, Grid, Image } from "@chakra-ui/react";
-import { WobbleCard } from "@/components/ui/wobble-card";
+import { Box, Button, Grid, HStack, Image, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { Body, H2, H3 } from "st-peter-ui";
+import { BaseText } from "st-peter-ui";
+import { ArrowRight } from "lucide-react";
+
+const services = [
+  {
+    title: "Apply for Claim Benefits",
+    description:
+      "Please check your policy details, contact a Sales Agent, or visit your branch of account for more information.",
+    image: "/images/services/claim-benefits.jpg",
+    href: "/claims",
+    buttonText: "Apply Now",
+    featured: true,
+    dark: false,
+  },
+  {
+    title: "Return of Premium",
+    description:
+      "Please check your policy details, contact a Sales Agent, or visit your branch of account for more information.",
+    href: "/login",
+    buttonText: "Start Request",
+    featured: false,
+    dark: true,
+  },
+  {
+    title: "Track Your Request",
+    description:
+      "To track your request, please have your reference number ready.",
+    href: "/transaction",
+    buttonText: "Track Request",
+    featured: false,
+    dark: true,
+  },
+  {
+    title: "Memorial Service Booking Assistance",
+    description:
+      "To proceed, please have your life plan contact details ready.",
+    image: "/images/services/request-service.jpg",
+    href: "/booking",
+    buttonText: "Book Service",
+    featured: true,
+    dark: false,
+  },
+];
 
 const Services = () => {
   const router = useRouter();
+
   return (
-    <section>
-      <Box padding="8">
-        <Box mb={8} textAlign="center">
-          <H2>Get instant access to online services</H2>
-        </Box>
-        <Grid
-          templateColumns={{ base: "1fr", lg: "repeat(3, 1fr)" }}
-          gap={4}
-          maxW="7xl"
-          mx="auto"
-          w="full"
+    <Box
+      as="section"
+      py={{ base: 12, md: 20 }}
+      px={{ base: 4, md: 8 }}
+      overflow="hidden"
+    >
+      <VStack gap={3} mb={{ base: 10, md: 14 }} textAlign="center">
+        <BaseText
+          fontSize={{ base: "2xl", md: "4xl" }}
+          fontWeight="bold"
+          lineHeight="shorter"
+          maxW="4xl"
         >
-          <WobbleCard
-            containerClassName="col-span-1 lg:col-span-2 h-full bg-gray-200 min-h-[300px] lg:min-h-[300px]"
-            className=""
-            onClick={() => router.push("/claims")}
-          >
-            <Box p={8}>
-              <Box mb={4}>
-                <H3>Apply for a Claim Benefits</H3>
+          Get instant access to online services{" "}
+        </BaseText>
+        <BaseText color="gray.600" fontSize={{ base: "sm", md: "md" }}>
+          Access claims, requests, memorial services, and policy-related
+          assistance with a fast and convenient digital experience.
+        </BaseText>
+      </VStack>
+
+      <Grid
+        templateColumns={{ base: "1fr", lg: "repeat(3, 1fr)" }}
+        gap={6}
+        maxW="7xl"
+        mx="auto"
+      >
+        {services.map((service, index) => {
+          const isFeatured = service.featured;
+
+          return (
+            <Box
+              key={index}
+              position="relative"
+              overflow="hidden"
+              cursor="pointer"
+              role="group"
+              minH={{ base: "320px", md: "340px" }}
+              gridColumn={{
+                base: "span 1",
+                lg: isFeatured ? "span 2" : "span 1",
+              }}
+              bg={
+                service.dark
+                  ? "linear-gradient(135deg, #177D54 0%, #116B47 100%)"
+                  : "white"
+              }
+              color={service.dark ? "white" : "gray.900"}
+              borderRadius="32px"
+              border="1px solid"
+              borderColor={service.dark ? "whiteAlpha.200" : "gray.200"}
+              boxShadow="0 10px 40px rgba(0,0,0,0.06)"
+              transition="all 0.3s ease"
+              _hover={{
+                transform: "translateY(-6px)",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.12)",
+              }}
+              onClick={() => router.push(service.href)}
+            >
+              {/* Background Glow */}
+              <Box
+                position="absolute"
+                top="-80px"
+                right="-80px"
+                w="220px"
+                h="220px"
+                bg={service.dark ? "whiteAlpha.100" : "rgba(23, 125, 84, 0.08)"}
+                filter="blur(20px)"
+                borderRadius="full"
+              />
+
+              <Box
+                position="relative"
+                zIndex={2}
+                h="full"
+                p={{ base: 6, md: 8 }}
+                display="flex"
+                flexDirection="column"
+                justifyContent="space-between"
+              >
+                <Box maxW={{ base: "full", lg: isFeatured ? "60%" : "full" }}>
+                  <BaseText
+                    fontSize={{ base: "2xl", md: "3xl" }}
+                    fontWeight="bold"
+                    lineHeight="shorter"
+                    mb={4}
+                    color={service.dark ? "white" : "gray.900"}
+                  >
+                    {service.title}
+                  </BaseText>
+
+                  <BaseText
+                    fontSize={{ base: "sm", md: "md" }}
+                    lineHeight="tall"
+                    color={service.dark ? "whiteAlpha.800" : "gray.600"}
+                  >
+                    {service.description}
+                  </BaseText>
+                </Box>
+
+                <HStack mt={8}>
+                  <Button
+                    size="md"
+                    rounded="full"
+                    px={6}
+                    bg={service.dark ? "white" : "#177D54"}
+                    color={service.dark ? "#177D54" : "white"}
+                    fontWeight="semibold"
+                    transition="all 0.2s ease"
+                    _hover={{
+                      transform: "translateX(2px)",
+                      opacity: 0.9,
+                    }}
+                  >
+                    {service.buttonText}
+                  </Button>
+
+                  <Box
+                    transition="transform 0.2s ease"
+                    _groupHover={{
+                      transform: "translateX(4px)",
+                    }}
+                  >
+                    <ArrowRight size={18} />
+                  </Box>
+                </HStack>
               </Box>
-              <Box maxW="md">
-                <Body>
-                  Please check your policy details, or contact a Sales Agent, or
-                  visit your branch of account for more information.
-                </Body>
-              </Box>
+
+              {service.image && (
+                <Image
+                  src={service.image}
+                  alt={service.title}
+                  position="absolute"
+                  right={{ base: "-20px", lg: "20px" }}
+                  bottom="0"
+                  w={{ base: "160px", md: "240px", lg: "280px" }}
+                  objectFit="contain"
+                  opacity={0.95}
+                  transition="all 0.35s ease"
+                  _groupHover={{
+                    transform: "scale(1.04) translateY(-4px)",
+                  }}
+                  pointerEvents="none"
+                  display={{ base: "none", md: "block" }}
+                />
+              )}
             </Box>
-            <Image
-              src="/images/services/claim-benefits.jpg"
-              alt="claim benefits"
-              width={250}
-              top="0"
-              height="auto"
-              position="absolute"
-              right={{ base: 0, lg: "0%" }}
-              bottom="0"
-              objectFit="cover"
-              borderRadius="2xl"
-              display={{ base: "none", lg: "block" }}
-            />
-          </WobbleCard>
-          <WobbleCard
-            containerClassName="col-span-1 min-h-[300px] bg-gray-200 bg-[#177D54] text-white"
-            onClick={() => router.push("/login")}
-          >
-            <Box p={8}>
-              <Box mb={4}>
-                <H3 color="white">Apply for Return of Premium </H3>
-              </Box>
-              <Body color="white">
-                Please check your policy details, contact a Sales Agent, or
-                visit your branch of account for more information.
-              </Body>
-            </Box>
-          </WobbleCard>
-          <WobbleCard
-            containerClassName="col-span-1 min-h-[300px] bg-gray-200 bg-[#177D54] text-white"
-            onClick={() => router.push("/transaction")}
-          >
-            <Box p={8}>
-              <Box mb={4}>
-                <H3 color="white">Track your request</H3>
-              </Box>
-              <Body color="white">
-                To track your request, please have your reference number ready.
-              </Body>
-            </Box>
-          </WobbleCard>
-          <WobbleCard
-            containerClassName="col-span-1 lg:col-span-2 h-full bg-gray-200 min-h-[300px] lg:min-h-[300px]"
-            onClick={() => router.push("/booking")}
-          >
-            <Box p={8}>
-              <Box mb={4}>
-                <H3>Memorial Service Booking Assistance</H3>
-              </Box>
-              <Body>
-                To proceed, please have your life plan contact details ready.
-              </Body>
-            </Box>
-            <Image
-              src="/images/services/request-service.jpg"
-              alt="request service"
-              width={240}
-              height="auto"
-              position="absolute"
-              top="0"
-              right={{ base: 0, lg: "0%" }}
-              bottom="0"
-              objectFit="cover"
-              borderRadius="2xl"
-              display={{ base: "none", lg: "block" }}
-            />
-          </WobbleCard>
-        </Grid>
-      </Box>
-    </section>
+          );
+        })}
+      </Grid>
+    </Box>
   );
 };
 

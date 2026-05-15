@@ -2,9 +2,12 @@
 
 import React from "react";
 import { FileClaimPage } from "osp-chakra-reusable-components";
-import { Box } from "@chakra-ui/react";
+import { Box, Button } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { Breadcrumb } from "st-peter-ui";
+import { FaArrowLeft } from "react-icons/fa";
+import Container from "@/components/ui/container";
+
 const breadcrumbItems = [
   {
     label: "Home",
@@ -15,21 +18,38 @@ const breadcrumbItems = [
     href: "/claims",
   },
 ];
-const page = () => {
+const Claims = () => {
   const router = useRouter();
   return (
-    <Box p={8} mt={24} maxW={"7xl"} mx={"auto"} px={0}>
-      <Breadcrumb items={breadcrumbItems} />
-      <FileClaimPage
-        onClickHome={function (): void {
-          throw new Error("Function not implemented.");
-        }}
-        onClickTrack={() => {
-          router.push("/transaction/PY-9183982");
-        }}
-      />
-    </Box>
+    <Container>
+      <Box maxW={"7xl"} mx={"auto"}>
+        <Box display={{ base: "block", md: "none" }} px={{ base: 4, md: 0 }}>
+          <Button
+            variant="ghost"
+            size="md"
+            onClick={() => router.back()}
+            px={0}
+          >
+            <FaArrowLeft color="#177D54" />
+            Back
+          </Button>
+        </Box>
+        <Box display={{ base: "none", md: "block" }}>
+          <Breadcrumb items={breadcrumbItems} />
+        </Box>{" "}
+        <Box p={{ base: 4, md: 0 }}>
+          <FileClaimPage
+            onClickHome={function (): void {
+              router.push("/");
+            }}
+            onClickTrack={() => {
+              router.push("/transaction/PY-9183982");
+            }}
+          />
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
-export default page;
+export default Claims;

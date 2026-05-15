@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { getOCR } from "@/services/ocrService";
+import { getOCR } from "@/services/API/OcrService";
 import { IAPIResponse } from "@/types/ocrResponse"
 
 export function useOcr() {

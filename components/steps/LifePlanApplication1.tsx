@@ -48,7 +48,7 @@ const LifePlanApplication1 = ({
     emailAddress: initialData?.emailAddress ?? "",
     mailingAddress: initialData?.mailingAddress ?? "",
     landLineNumber: initialData?.landLineNumber ?? "",
-    addressLine1: initialData?.addressLine1 ?? "",
+    // addressLine1: initialData?.addressLine1 ?? "",
   });
   const OCRValue = localStorage.getItem("ocrResult");
 
@@ -290,7 +290,7 @@ const LifePlanApplication1 = ({
           </Field.Root>
 
           <Field.Root>
-            <Field.Label>Date of Neutralization</Field.Label>
+            <Field.Label>Date of Naturalization</Field.Label>
 
             <Input id="dateOfNeutralization" type="date" />
           </Field.Root>

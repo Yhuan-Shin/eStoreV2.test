@@ -6,20 +6,21 @@ import {
   VStack,
   Grid,
   Button,
-  Link,
   Separator,
   Input,
   Field,
-  Flex,
 } from "@chakra-ui/react";
 import FloatingLabelInput from "@/components/ui/floating-label-input";
 import { FaArrowLeft } from "react-icons/fa";
 import { Breadcrumb } from "st-peter-ui";
+import { useSearchPlanholder } from "@/hooks/planholder/useSearchPlanholder";
 
 import { useRouter } from "next/navigation";
 
 const PayMyPlan = () => {
   const router = useRouter();
+  const { loading, error, search } = useSearchPlanholder();
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     lpaNumber: "",
@@ -37,8 +38,67 @@ const PayMyPlan = () => {
     }));
   };
 
-  const handleSearch = () => {
-    console.log("Search Account:", formData);
+  const normalize = (value: string) =>
+    value.trim().replace(/\s+/g, " ").toLowerCase();
+
+  const handleSearch = async () => {
+    if (!formData.lpaNumber.trim()) {
+      setValidationError("LPA Number is required.");
+      return;
+    } else if (!formData.firstName.trim()) {
+      setValidationError("First Name is required.");
+      return;
+    } else if (!formData.lastName.trim()) {
+      setValidationError("Last Name is required.");
+      return;
+    } else if (!formData.dateOfBirth.trim()) {
+      setValidationError("Date of Birth is required.");
+      return;
+    }
+
+    setValidationError(null);
+    // search expects three arguments: lpaNumber, dateOfBirth, lastName
+    const result = await search(
+      formData.lpaNumber.trim(),
+      formData.dateOfBirth.trim(),
+      formData.lastName,
+    );
+
+    if (!result) {
+      return;
+    }
+
+    const firstNameMatches =
+      !formData.firstName ||
+      normalize(result.personalInfo.firstName).includes(
+        normalize(formData.firstName),
+      );
+    const middleNameMatches =
+      !formData.middleName ||
+      normalize(result.personalInfo.middleName).includes(
+        normalize(formData.middleName),
+      );
+    const lastNameMatches =
+      !formData.lastName ||
+      normalize(result.personalInfo.lastName).includes(
+        normalize(formData.lastName),
+      );
+    const birthDateMatches =
+      !formData.dateOfBirth ||
+      result.personalInfo.birthDate === formData.dateOfBirth;
+
+    if (
+      !firstNameMatches ||
+      !middleNameMatches ||
+      !lastNameMatches ||
+      !birthDateMatches
+    ) {
+      setValidationError("Entered details do not match the planholder record.");
+      return;
+    }
+
+    sessionStorage.setItem("payMyPlanDetails", JSON.stringify(result));
+    router.push("/pay-my-plan/details");
   };
   const breadcrumbItems = [
     {
@@ -53,13 +113,13 @@ const PayMyPlan = () => {
 
   return (
     <Box
-      p={8}
-      mt={{ base: 0, md: 24 }}
+      mt={{ base: 24, md: 32 }}
       maxW={"7xl"}
       mx={"auto"}
+      mb={{ base: 24, md: 16 }}
       px={{ base: 4, md: 0 }}
     >
-      <Box display={{ base: "block", md: "none" }}>
+      <Box display={{ base: "block", md: "none" }} mb={8}>
         <Button variant="ghost" size="md" onClick={() => router.back()} px={0}>
           <FaArrowLeft color="#177D54" />
           Back
@@ -68,7 +128,7 @@ const PayMyPlan = () => {
       <Box display={{ base: "none", md: "block" }}>
         <Breadcrumb items={breadcrumbItems} />
       </Box>
-      <Box mt={4}>
+      <Box>
         <H3>Pay My Plan</H3>
         <Body>
           Search for your St. Peter Life Plan account to view details and manage
@@ -144,12 +204,12 @@ const PayMyPlan = () => {
 
         <Separator />
 
+        {(validationError || error) && (
+          <Body color="red.500">{validationError ?? error}</Body>
+        )}
+
         {/* Search Button */}
-        <PrimaryMdFlexButton
-          onClick={() => {
-            router.push("/pay-my-plan/details");
-          }}
-        >
+        <PrimaryMdFlexButton onClick={handleSearch} disabled={loading}>
           SEARCH
         </PrimaryMdFlexButton>
 

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { StPeterProvider } from "st-peter-ui";
-
 //@ts-ignore
 import "./globals.css";
 import Navbar from "@/components/ui/navbar";
 import Footer from "@/components/ui/footer";
 import BottomNav from "@/components/ui/bottom-nav";
 import ServiceWorkerRegister from "@/components/service-worker";
+import { DemoAuthProvider } from "@/components/ui/demo-auth";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -47,10 +47,12 @@ export default function RootLayout({
       <body style={{ overflowX: "hidden" }}>
         <ServiceWorkerRegister />
         <StPeterProvider theme="green" font="Open Sans">
-          <Navbar />
-          {children}
-          <BottomNav />
-          <Footer />
+          <DemoAuthProvider>
+            <Navbar />
+            {children}
+            <BottomNav />
+            <Footer />
+          </DemoAuthProvider>
         </StPeterProvider>
       </body>
     </html>

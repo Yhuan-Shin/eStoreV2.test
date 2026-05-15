@@ -20,6 +20,7 @@ export const ProductService = {
     async getPlansCard() {
         try {
             return await getPlansCard();
+            
         } catch (error) {
             console.error("Error fetching plans card:", error);
             throw error;

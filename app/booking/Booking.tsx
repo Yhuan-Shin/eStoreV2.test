@@ -3,7 +3,7 @@ import { BookingForm } from "osp.cis.nextjs.components";
 import { Box, Flex } from "@chakra-ui/react/";
 import { RopPage } from "osp-chakra-reusable-components";
 
-const page = () => {
+const Booking = () => {
   return (
     <Flex
       p={8}
@@ -13,9 +13,9 @@ const page = () => {
       maxW="7xl"
       mx="auto"
     >
-      <BookingForm homeLink="/" trackMyRequestLink="/transaction/" />
+      <BookingForm />
     </Flex>
   );
 };
 
-export default page;
+export default Booking;

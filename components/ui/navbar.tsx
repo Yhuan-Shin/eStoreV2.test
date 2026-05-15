@@ -1,19 +1,42 @@
 "use client";
-import { HStack, Menu, Portal, Image, IconButton, Box } from "@chakra-ui/react";
+import {
+  HStack,
+  Menu,
+  Portal,
+  Image,
+  IconButton,
+  Box,
+  Avatar,
+  AvatarGroup,
+  Dialog,
+  VStack,
+  Text,
+  Button,
+  CloseButton,
+} from "@chakra-ui/react";
 import { IoSearchOutline } from "react-icons/io5";
 import { MdOutlineShoppingCart, MdArrowDropDown } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import ShoppingCart from "./shopping-cart";
 import { useCartCount } from "@/hooks/useCartCount";
-import { BaseButton, ContactUsButton, LoginButton } from "st-peter-ui";
+import {
+  BaseButton,
+  ContactUsButton,
+  LoginButton,
+  PrimaryMdButton,
+} from "st-peter-ui";
 import Link from "next/link";
+import { useDemoAuth } from "@/components/ui/demo-auth";
+import { MdOutlineAccountCircle } from "react-icons/md";
+import ShoppingCart from "@/components/ui/shopping-cart";
 
 const Navbar = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const router = useRouter();
   const count = useCartCount();
+  const { isLoggedIn, logout } = useDemoAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,6 +48,48 @@ const Navbar = () => {
 
   return (
     <>
+      <HStack
+        display={{ base: "flex", md: "none" }}
+        position="fixed"
+        top={scrolled ? 0 : 4}
+        left={scrolled ? 0 : 3}
+        right={scrolled ? 0 : 3}
+        zIndex={50}
+        px={4}
+        py={3}
+        justify="space-between"
+        align="center"
+        bg={scrolled ? "whiteAlpha.900" : "whiteAlpha.800"}
+        backdropFilter="blur(12px)"
+        transition="all 0.3s ease"
+        borderRadius={scrolled ? "0" : "full"}
+        shadow={scrolled ? "md" : "sm"}
+      >
+        <Image
+          src="https://www.stpeter.com.ph/images/logo2gold.png"
+          alt="E-Store Logo"
+          cursor="pointer"
+          onClick={() => router.push("/")}
+          w={{ base: "140px", sm: "160px" }}
+          h="auto"
+          maxW="100%"
+          objectFit="contain"
+        />
+
+        {isLoggedIn ? (
+          <Box cursor="pointer" onClick={() => setProfileOpen(true)}>
+            <AvatarGroup>
+              <Avatar.Root>
+                <Avatar.Fallback />
+                <Avatar.Image src="/images/profile.jpg" />
+              </Avatar.Root>
+            </AvatarGroup>
+          </Box>
+        ) : (
+          <LoginButton onClick={() => router.push("/login")} />
+        )}
+      </HStack>
+
       <HStack
         display={{ base: "none", md: "inline-flex" }}
         padding={10}
@@ -185,7 +250,9 @@ const Navbar = () => {
               <IconButton
                 aria-label="Shopping Cart"
                 variant="ghost"
-                onClick={() => setCartOpen(true)}
+                aria-expanded={cartOpen}
+                aria-haspopup="dialog"
+                onClick={() => setCartOpen((open) => !open)}
               >
                 <MdOutlineShoppingCart />
               </IconButton>
@@ -213,7 +280,18 @@ const Navbar = () => {
 
             <ContactUsButton onClick={() => router.push("/contact-us")} />
 
-            <LoginButton onClick={() => router.push("/login")} />
+            {isLoggedIn ? (
+              <Box cursor="pointer" onClick={() => setProfileOpen(true)}>
+                <AvatarGroup>
+                  <Avatar.Root>
+                    <Avatar.Fallback />
+                    <Avatar.Image src="/images/profile.jpg" />
+                  </Avatar.Root>
+                </AvatarGroup>
+              </Box>
+            ) : (
+              <LoginButton onClick={() => router.push("/login")} />
+            )}
             {/* <PrimarySmButton
               textDecoration="none"
               display={{ base: "none", md: "inline-flex" }}
@@ -224,8 +302,91 @@ const Navbar = () => {
           </HStack>
         </Box>
       </HStack>
-
+      {/* Floating Cart Button */}
+      {/* <Button
+        position="fixed"
+        top={{ base: 10, md: 24 }}
+        right={6}
+        zIndex="sticky"
+        borderRadius="full"
+        bg="green.600"
+        _hover={{ bg: "green.700" }}
+        w={16}
+        h={16}
+        display={{ base: "flex", md: "flex", lg: "none" }}
+        alignItems="center"
+        justifyContent="center"
+        boxShadow="lg"
+        onClick={() => setCartOpen(true)}
+        aria-label="Shopping Cart"
+      >
+        <Flex direction="column" align="center" gap={0.5}>
+          <Icon as={MdOutlineShoppingCart} boxSize={6} color="white" />
+        </Flex>
+      </Button> */}
       <ShoppingCart open={cartOpen} onClose={() => setCartOpen(false)} />
+
+      {/* Profile Modal */}
+      <Dialog.Root
+        open={profileOpen}
+        onOpenChange={(e) => setProfileOpen(e.open)}
+        size="md"
+        placement="top"
+      >
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Header>
+              <Dialog.Title display="none" />
+            </Dialog.Header>
+            <Dialog.Body as={VStack} gap={8} py={8}>
+              {/* Profile Picture */}
+              <Avatar.Root size="xl">
+                <Avatar.Image src="/images/profile.jpg" alt="Profile" />
+                <Avatar.Fallback />
+              </Avatar.Root>
+
+              {/* User Name */}
+              <VStack gap={1}>
+                <Text fontSize="lg" fontWeight="bold">
+                  Yhuan Shin Tejima
+                </Text>
+                <Text fontSize="sm" color="gray.600">
+                  SPLPI-01-123456789
+                </Text>
+              </VStack>
+
+              {/* Action Buttons */}
+              <VStack gap={3} w="full" pt={4}>
+                <PrimaryMdButton
+                  w="full"
+                  onClick={() => {
+                    router.push("/account/profile");
+                    setProfileOpen(false);
+                  }}
+                >
+                  Manage Account
+                </PrimaryMdButton>
+                <Button
+                  w="full"
+                  colorScheme="red"
+                  variant="outline"
+                  onClick={() => {
+                    logout?.();
+                    setProfileOpen(false);
+                    router.push("/");
+                  }}
+                >
+                  Sign Out
+                </Button>
+              </VStack>
+            </Dialog.Body>
+            <Dialog.CloseTrigger asChild>
+              <CloseButton size="md" />
+            </Dialog.CloseTrigger>{" "}
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Dialog.Root>
     </>
   );
 };
