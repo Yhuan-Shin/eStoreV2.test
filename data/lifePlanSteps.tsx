@@ -1,7 +1,7 @@
-import Beneficiary from "@/components/steps/Beneficiary";
+import Beneficiary from "@/components/steps/beneficiary";
 import Confirmation, {
   type ConfirmationProps,
-} from "@/components/steps/Confirmation";
+} from "@/components/steps/confirmation";
 import HealthDeclaration from "@/components/steps/HealthDeclaration";
 import LifePlanApplicationWrapper from "@/components/steps/LifePlanApplicationFormWrapper";
 
