@@ -1,0 +1,32 @@
+[
+  {
+    "planCode": "G5M6",
+    "planDesc": "ST. GREGORY",
+    "productCode": "LP",
+    "mode": "M",
+    "contractPrice": 57000,
+    "ipInstAmt": 1100,
+    "casketDesc": "Metal Casket, Single Top (Split Lid Cover), Full Glass, Elegant Interiors, corners and handles",
+    "isTopPlan": 1,
+    "discount": 0,
+    "rating": 2,
+    "planTerm": 5,
+    "auditUser": "MAIN ORAFFYRA",
+    "auditDate": "2023-02-10T08:15:26.587"
+  },
+  {
+    "planCode": "G7M9",
+    "planDesc": "ST. GREGORY",
+    "productCode": "LP",
+    "mode": "M",
+    "contractPrice": 62000,
+    "ipInstAmt": 850,
+    "casketDesc": "Metal Casket, Single Top (Split Lid Cover), Full Glass, Elegant Interiors, corners and handles",
+    "isTopPlan": 0,
+    "discount": 0,
+    "rating": 0,
+    "planTerm": 7,
+    "auditUser": "Audituser001",
+    "auditDate": "2024-09-11T03:04:09.32"
+  }
+]
