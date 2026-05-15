@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 import React, { use } from "react";
 import ProductView from "@/components/product-view";
 //import { getProductByName } from "@/lib/utils/plan";
