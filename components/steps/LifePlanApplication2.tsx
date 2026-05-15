@@ -225,7 +225,8 @@ interface LifePlanApplication2Props {
 const LifePlanApplication2 = ({
   onAddressUpdate,
 }: LifePlanApplication2Props) => {
-  const OCRValue = localStorage.getItem("ocrResult");
+  const OCRValue = "";
+  // const OCRValue = localStorage.getItem("ocrResult");
   const { runOCR, data } = useOcr();
   const [lot, setLot] = useState("");
   const [street, setStreet] = useState("");

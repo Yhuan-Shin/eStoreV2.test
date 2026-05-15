@@ -50,7 +50,8 @@ const LifePlanApplicationStepWrapper = () => {
 
       const checkoutRaw = sessionStorage.getItem("CheckoutCart");
       const cartRaw = sessionStorage.getItem("Cart");
-
+      // const checkoutRaw = "";
+      // const cartRaw = "";
       const parsed =
         safeParse<CartItem | CartItem[]>(checkoutRaw) ??
         safeParse<CartItem | CartItem[]>(cartRaw);

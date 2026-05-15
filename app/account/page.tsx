@@ -158,7 +158,7 @@ const Account = () => {
         maxW="7xl"
         mx="auto"
       >
-        <PlanholderProfilePage props={planholderProfileData} noLookup />
+        {/* <PlanholderProfilePage props={planholderProfileData} noLookup /> */}
       </Box>
     </MessageDialogProvider>
   );

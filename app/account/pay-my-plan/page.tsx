@@ -652,7 +652,7 @@ const PayMyPlan = () => {
           </Grid>
         </Box>
         <Box>
-          <ListOfPlans
+          {/* <ListOfPlans
             plans={[
               {
                 lpaNumber: "L25048596I",
@@ -692,7 +692,7 @@ const PayMyPlan = () => {
                 },
               },
             ]}
-          />
+          /> */}
         </Box>
       </Box>
     </MessageDialogProvider>

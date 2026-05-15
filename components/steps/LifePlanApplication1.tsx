@@ -50,8 +50,8 @@ const LifePlanApplication1 = ({
     landLineNumber: initialData?.landLineNumber ?? "",
     // addressLine1: initialData?.addressLine1 ?? "",
   });
-  const OCRValue = localStorage.getItem("ocrResult");
-
+  // const OCRValue = localStorage.getItem("ocrResult");
+  const OCRValue = "";
   useEffect(() => {
     runOCR();
   }, []);
