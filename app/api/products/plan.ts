@@ -1,6 +1,6 @@
 import path from "path";
 import { url } from "../";
-import fs from "fs";
+import fs from "node:fs";
 
 
 export async function getModeAndName(planDesc: string, selectedPlan: string) {
