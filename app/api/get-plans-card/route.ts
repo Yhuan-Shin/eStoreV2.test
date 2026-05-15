@@ -6,7 +6,7 @@ export async function GET() {
   try {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-    const res = await fetch(`${url}/GetPlansCard`, {
+    const res = await fetch(`${url}/api/GetPlansCards`, {
       method: "GET",
     });
 

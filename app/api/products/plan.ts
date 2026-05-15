@@ -16,15 +16,17 @@ export async function getProductByName(planDesc: string) {
 }
 
 export async function getPlansCard() {
-    const api = `${url}/GetPlansCard`;
+    const api = `${url}api/Product/GetPlanCards`;
     const res = await fetch(api);
     const data = await res.json();
     return Array.isArray(data) ? data : [data];
 }
 
 export async function getPlansSection() {
-    const api = `${url}/GetPlansSection`;
+    const api = `${url}api/Product/GetPlanSections`;
+    console.log("API URL for getPlansSection:", api); // Debug log to check the API URL
     const res = await fetch(api);
+    console.log("Response from getPlansSection:", res); // Debug log to check the response
     const data = await res.json();
     return Array.isArray(data) ? data : [data];
 }
